@@ -22,11 +22,11 @@ type ProxyServer struct {
 }
 
 func (p ProxyServer) RequestHandler(w http.ResponseWriter, req *http.Request) {
+  log.Print(req.Method, " ", req.URL.Path, "?", req.URL.RawQuery, ": served from origin")
   p.newReverseProxy().ServeHTTP(w, req)
 }
 
 func (p ProxyServer) newReverseProxy() (*ReverseProxy) {
-  log.Print("Handler caught this")
   return &ReverseProxy{
     Director: p.director,
     ModifyResponse: p.ResponseModifier,

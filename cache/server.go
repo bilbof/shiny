@@ -7,7 +7,7 @@ import (
 )
 
 func ServeHTTP(item CacheableResponse, rw http.ResponseWriter, req *http.Request)  {
-  log.Print("Serving from cache: ", item.Key)
+  log.Print(req.Method, " ", req.URL.Path, "?", req.URL.RawQuery, ": served from cache")
 
   for k, v := range item.Header {
     rw.Header().Set(k, strings.Join(v, ","))
