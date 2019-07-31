@@ -6,7 +6,6 @@ Memcached needs to be running in order for the cache to work currently.
 docker run -p 11211:11211 -d memcached memcached -I 30m
 ```
 
-- Should only cache HEAD and GET requests that return certain status codes
 - Make it more robust to failure in general
 - Refactor it a bit, as it's currently a bit messy.
 - Handle failures gracefully.

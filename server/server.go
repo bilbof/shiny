@@ -74,6 +74,10 @@ func responseModifier(res *http.Response, req *http.Request) error {
 }
 
 func cacheResponse(res *http.Response, req *http.Request) error {
+  if !canCache(res) {
+    return nil
+  }
+
   body, err := ioutil.ReadAll(res.Body)
   res.Body = ioutil.NopCloser(bytes.NewBuffer(body))
 
@@ -96,4 +100,16 @@ func cacheResponse(res *http.Response, req *http.Request) error {
   }
 
   return nil
+}
+
+func canCache(res *http.Response) bool {
+  cacheableMethods := map[string]bool {
+    "GET": true,
+    "HEAD": true,
+  }
+
+  cacheableCode := res.StatusCode < 400 || res.StatusCode == 404 || res.StatusCode == 405
+  cacheableMethod := cacheableMethods[res.Request.Method]
+
+  return cacheableCode && cacheableMethod
 }
