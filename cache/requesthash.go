@@ -1,4 +1,4 @@
-package server
+package cache
 
 import (
   "crypto/sha256"
@@ -7,7 +7,6 @@ import (
 )
 
 // Generates a hash for a request.
-
 func RequestHash(req *http.Request) string {
   k := key(req)
   h := sha256.New()

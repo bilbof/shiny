@@ -1,9 +1,7 @@
 package server
 
 import (
-  "bytes"
   "flag"
-  "io/ioutil"
   "log"
   "fmt"
   "net/http"
@@ -31,8 +29,7 @@ func (s Server) ListenAndServe() (error) {
 // requestHandler takes a request and passes it either to the cache
 // or to the proxy server
 func (s Server) requestHandler(rw http.ResponseWriter, req *http.Request)  {
-  key := RequestHash(req)
-  item, err := cache.Get(key)
+  item, err := cache.Get(req)
 
   if err != nil {
     fmt.Errorf("Error:", err)
@@ -56,49 +53,9 @@ func (s Server) requestHandler(rw http.ResponseWriter, req *http.Request)  {
 func responseModifier(res *http.Response, req *http.Request) error {
   res.Header["S-Cache"] = []string{"MISS"}
 
-  if err := cacheResponse(res, req); err != nil {
+  if err := cache.CacheResponse(req, res); err != nil {
     // Log the cache error, but don't die because of it.
     fmt.Errorf("Error: failed to cache response for ", req.Method, " ", req.URL.Path, "?", req.URL.RawQuery)
   }
   return nil
-}
-
-func cacheResponse(res *http.Response, req *http.Request) error {
-  if !canCache(res) {
-    return nil
-  }
-
-  body, err := ioutil.ReadAll(res.Body)
-  res.Body = ioutil.NopCloser(bytes.NewBuffer(body))
-
-  if err != nil {
-    return err
-  }
-
-  key := RequestHash(req)
-
-  item := cache.CacheableResponse{
-    Key: key,
-    Body: body,
-    Header: res.Header,
-  }
-
-  if err := cache.Set(key, item.Bytes()); err != nil {
-    fmt.Errorf("Error: Failed to set cache", err)
-    return err
-  }
-
-  return nil
-}
-
-func canCache(res *http.Response) bool {
-  cacheableMethods := map[string]bool {
-    "GET": true,
-    "HEAD": true,
-  }
-
-  cacheableCode := res.StatusCode < 400 || res.StatusCode == 404 || res.StatusCode == 405
-  cacheableMethod := cacheableMethods[res.Request.Method]
-
-  return cacheableCode && cacheableMethod
 }

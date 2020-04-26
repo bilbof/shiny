@@ -13,6 +13,7 @@ type CacheableResponse struct {
   Key string
   Body []byte
   Header http.Header
+  Expiration int32
 }
 
 func (c CacheableResponse) Bytes() []byte {
