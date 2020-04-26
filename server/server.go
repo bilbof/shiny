@@ -54,7 +54,7 @@ func (s Server) requestHandler(rw http.ResponseWriter, req *http.Request)  {
 // It receives the origin server response, and is where we can hook in
 // to perform actions such as caching the response.
 func responseModifier(res *http.Response, req *http.Request) error {
-  res.Header["Shiny-Cache"] = []string{"MISS"}
+  res.Header["S-Cache"] = []string{"MISS"}
 
   if err := cacheResponse(res, req); err != nil {
     // Log the cache error, but don't die because of it.

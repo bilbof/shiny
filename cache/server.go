@@ -12,7 +12,7 @@ func ServeHTTP(item CacheableResponse, rw http.ResponseWriter, req *http.Request
   for k, v := range item.Header {
     rw.Header().Set(k, strings.Join(v, ","))
   }
-  rw.Header().Set("Shiny-Cache", "HIT")
+  rw.Header().Set("S-Cache", "HIT")
 
   rw.Write(item.Body)
   return
