@@ -8,7 +8,7 @@ import (
 func main() {
   s := server.Server {
     Port: ":1718",
-    BackendUrl: "http://localhost:3062",
+    BackendUrl: "http://localhost:8000",
   }
 
   err := s.ListenAndServe()
